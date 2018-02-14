@@ -11,3 +11,7 @@ class OneSignal:
     def new_notification(title, subtitle, content):
         notification = Notification(title, subtitle, content)
         return notification
+
+    @staticmethod
+    def set_timezone(timezone):
+        settings.TIMEZONE = timezone

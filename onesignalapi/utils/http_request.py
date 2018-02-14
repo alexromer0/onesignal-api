@@ -3,23 +3,19 @@ import json
 
 
 class HttpRequest:
-    response = {}
-    response['error'] = False
-    response['message'] = ''
-    response['data'] = []
+    response = {'error': False, 'message': '', 'data': []}
     url = ''
     headers = {}
     payload = {}
 
     def __init__(self, url, headers=False):
         self.url = url
-        if  isinstance(headers, dict):
+        if isinstance(headers, dict):
             self.headers = headers
         else:
             self.response['error'] = True
             self.response['message'] = 'The headers are not dict type'
             self.response['data'] = headers
-
 
     def post_request(self, data):
         if not self.url:

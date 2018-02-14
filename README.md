@@ -92,6 +92,24 @@ And finally send the notification:
 push_notification.send()
 ```
 
+Scheduling
+----------
+You need set the time you want to use to send the notifications, the default timezone is `UTC`, as One Signal uses UTC for sending the notifications, first set the timezone
+
+```python
+os_sdk.set_timezone('America/Mexico_City)
+```
+
+The timezome should be a valid string according pytz timezone list
+
+before send the notification you have to schedule it:
+
+```python
+push_notification.schedule('2018-01-01 12:00:00')
+```
+
+The schedule method receives a `%Y-%m-%d %H:%M:%S` string and then it convert the datetime string into a utc datetime, the method returns `True` if everything was ok or an error object if something fails
+
 
 Responses
 ---------

@@ -2,7 +2,7 @@
 """Notifications main class.
 
 This module handle the push notification creation, sending, include segments,
-exclude segments, set filters.
+exclude segments, set filters and scheduling.
 
 It always return a dictionary (dict) with this 3 elements:
 - error: (bool) True or False, if there was an error
@@ -12,16 +12,20 @@ It always return a dictionary (dict) with this 3 elements:
 TODO:
 A lot! XD
 """
+import pytz
+
 import onesignalapi.config.settings as config
 import onesignalapi.utils.http_request as http_helper
 import onesignalapi.utils.validator as validator
 
 
 class Notification:
-    response = {}
+    response = {'error': False, 'message': False, 'data': []}
     response['error'] = False
     response['message'] = False
     response['data'] = []
+    # Params
+    send_after = False
     included_segments = False
     excluded_segments = False
     include_players_ids = []
@@ -30,8 +34,10 @@ class Notification:
     message = ''
     title = ''
     subtitle = ''
+
     payload = {}
     headers = {}
+    valid = None
 
     def __init__(self, title, subtitle, message):
         self.url = config.ONESIGNAL_BASE_URL + config.ONESIGNAL_VERSION + '/notifications'
@@ -40,16 +46,15 @@ class Notification:
         self.message = message
         self.headers = {"Content-Type": "application/json; charset=utf-8",
                         "Authorization": "Basic " + config.ONESIGNAL_API_KEY.__str__()}
+        self.valid = validator.Validator()
 
     def send(self):
-        valid = validator.Validator()
-        setup_valid = valid.check_setup()
+        setup_valid = self.valid.check_setup()
 
         if setup_valid['error']:
             self.response['error'] = True
             self.response['message'] = 'There ara some missconfigurations, check data for more info'
             self.response['data'] = {'errors': setup_valid['data']}
-            return self.response
         else:
             self.payload['app_id'] = config.ONESIGNAL_APP_ID
             self.payload['headings'] = {"en": self.title}
@@ -66,7 +71,7 @@ class Notification:
                 self.response['error'] = True
                 self.response['message'] = res['message']
                 self.response['data'] = res['data']
-            return self.response
+        return self.response
 
     def include_segments(self, segments):
         if isinstance(segments, list):
@@ -151,3 +156,20 @@ class Notification:
     def delete_excluded_segments(self):
         del self.excluded_segments[:]
         return True
+
+    def schedule(self, date):
+        valid_date = self.valid.is_valid_date(date)
+        if valid_date['error']:
+            self.response['error'] = True
+            self.response['message'] = 'There ara some missconfigurations, check data for more info'
+            self.response['data'] = {'errors': valid_date['data']}
+            return self.response
+        else:
+            # Convert date to given timezone
+            original_date = valid_date['data'][0]
+            user_datetime = pytz.timezone(config.TIMEZONE).localize(original_date)
+            # Convert date to UTC
+            utc_datetime = user_datetime.astimezone(pytz.utc)
+            self.send_after = utc_datetime.strftime('%Y-%m-%d %H:%M:%S %Z')
+            self.payload['send_after'] = self.send_after
+            return True
