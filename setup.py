@@ -4,12 +4,12 @@ from distutils.core import setup
 setup(
     name='onesignalapi',
     packages=find_packages(),  # this must be the same as the name above
-    version='0.2',
+    version='0.3',
     description='One Signal API SDK https://onesignal.com',
     author='Alejandro Romero',
     author_email='ealejandrorg@gmail.com',
     url='https://github.com/alexromer0/onesignal-api.git',  # use the URL to the github repo
-    download_url='https://github.com/alexromer0/onesignal-api.git/tarball/0.2',
+    download_url='https://github.com/alexromer0/onesignal-api.git/tarball/0.3',
     keywords=['OneSignal', 'Notifications', 'Push'],
     license='MIT',
     classifiers=[

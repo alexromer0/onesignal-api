@@ -20,156 +20,154 @@ import onesignalapi.utils.validator as validator
 
 
 class Notification:
-    response = {'error': False, 'message': False, 'data': []}
-    response['error'] = False
-    response['message'] = False
-    response['data'] = []
-    # Params
-    send_after = False
-    included_segments = False
-    excluded_segments = False
-    include_players_ids = []
-    filters = []
-    url = False
-    message = ''
-    title = ''
-    subtitle = ''
+    __response = {'error': False, 'message': False, 'data': []}
 
-    payload = {}
-    headers = {}
-    valid = None
+    # Params
+    __send_after = False
+    __included_segments = False
+    ___excluded_segments = False
+    __include_players_ids = []
+    __filters = []
+    __url = False
+    __message = ''
+    __title = ''
+    __subtitle = ''
+
+    __payload = {}
+    __headers = {}
+    __valid = None
 
     def __init__(self, title, subtitle, message):
-        self.url = config.ONESIGNAL_BASE_URL + config.ONESIGNAL_VERSION + '/notifications'
-        self.title = title
-        self.subtitle = subtitle
-        self.message = message
-        self.headers = {"Content-Type": "application/json; charset=utf-8",
+        self.__url = config.ONESIGNAL_BASE_URL + config.ONESIGNAL_VERSION + '/notifications'
+        self.__title = title
+        self.__subtitle = subtitle
+        self.__message = message
+        self.__headers = {"Content-Type": "application/json; charset=utf-8",
                         "Authorization": "Basic " + config.ONESIGNAL_API_KEY.__str__()}
-        self.valid = validator.Validator()
+        self.__valid = validator.Validator()
 
     def send(self):
-        setup_valid = self.valid.check_setup()
+        setup_valid = self.__valid.check_setup()
 
         if setup_valid['error']:
-            self.response['error'] = True
-            self.response['message'] = 'There ara some missconfigurations, check data for more info'
-            self.response['data'] = {'errors': setup_valid['data']}
+            self.__response['error'] = True
+            self.__response['message'] = 'There ara some missconfigurations, check data for more info'
+            self.__response['data'] = {'errors': setup_valid['data']}
         else:
-            self.payload['app_id'] = config.ONESIGNAL_APP_ID
-            self.payload['headings'] = {"en": self.title}
-            self.payload['subtitle'] = {"en": self.subtitle}
-            self.payload['contents'] = {"en": self.message}
-            self.payload['ios_badgeType'] = "Increase"
-            self.payload['ios_badgeCount'] = 1
+            self.__payload['app_id'] = config.ONESIGNAL_APP_ID
+            self.__payload['headings'] = {"en": self.__title}
+            self.__payload['subtitle'] = {"en": self.__subtitle}
+            self.__payload['contents'] = {"en": self.__message}
+            self.__payload['ios_badgeType'] = "Increase"
+            self.__payload['ios_badgeCount'] = 1
 
-            req = http_helper.HttpRequest(self.url, self.headers)
+            req = http_helper.HttpRequest(self.__url, self.__headers)
             if req.response['error']:
                 return req.response
-            res = req.post_request(self.payload)
+            res = req.post_request(self.__payload)
             if res['error']:
-                self.response['error'] = True
-                self.response['message'] = res['message']
-                self.response['data'] = res['data']
-        return self.response
+                self.__response['error'] = True
+                self.__response['message'] = res['message']
+                self.__response['data'] = res['data']
+        return self.__response
 
     def include_segments(self, segments):
         if isinstance(segments, list):
-            if self.excluded_segments and any(map(lambda v: v in self.excluded_segments, segments)):
-                self.response['error'] = True
-                self.response['message'] = 'One or more of the provided segments are present into the excluded segments'
-                self.response['data'] = []
+            if self.___excluded_segments and any(map(lambda v: v in self.___excluded_segments, segments)):
+                self.__response['error'] = True
+                self.__response['message'] = 'One or more of the provided segments are present into the excluded segments'
+                self.__response['data'] = []
             else:
-                self.included_segments = segments
-                self.response['error'] = False
-                self.response['message'] = 'Ok'
-                self.response['data'] = segments
-                self.payload['included_segments'] = self.included_segments
+                self.__included_segments = segments
+                self.__response['error'] = False
+                self.__response['message'] = 'Ok'
+                self.__response['data'] = segments
+                self.__payload['included_segments'] = self.__included_segments
         else:
-            self.response['error'] = True
-            self.response['message'] = 'Not an array given, the parameter must be an array'
-            self.response['data'] = []
-        return self.response
+            self.__response['error'] = True
+            self.__response['message'] = 'Not an array given, the parameter must be an array'
+            self.__response['data'] = []
+        return self.__response
 
     def exclude_segments(self, segments):
         if isinstance(segments, list):
-            if self.included_segments and any(map(lambda v: v in self.included_segments, segments)):
-                self.response['error'] = True
-                self.response['message'] = 'One or more of the provided segments are present into the included segments'
-                self.response['data'] = []
+            if self.__included_segments and any(map(lambda v: v in self.__included_segments, segments)):
+                self.__response['error'] = True
+                self.__response['message'] = 'One or more of the provided segments are present into the included segments'
+                self.__response['data'] = []
             else:
-                self.excluded_segments = segments
-                self.payload['excluded_segments'] = self.excluded_segments
-                self.response['error'] = False
-                self.response['message'] = 'Ok'
-                self.response['data'] = self.excluded_segments
+                self.___excluded_segments = segments
+                self.__payload['excluded_segments'] = self.___excluded_segments
+                self.__response['error'] = False
+                self.__response['message'] = 'Ok'
+                self.__response['data'] = self.___excluded_segments
         else:
-            self.response['error'] = True
-            self.response['message'] = 'Not an array given, the parameter must be an array'
-            self.response['data'] = []
+            self.__response['error'] = True
+            self.__response['message'] = 'Not an array given, the parameter must be an array'
+            self.__response['data'] = []
 
-        return self.response
+        return self.__response
 
     def set_filters(self, filters):
         if isinstance(filters, list):
-            self.filters = filters
-            self.payload['filters'] = self.filters
+            self.__filters = filters
+            self.__payload['filters'] = self.__filters
         else:
-            self.response['error'] = True
-            self.response['message'] = 'Not an array given, the parameter must be an array'
-            self.response['data'] = []
-            return self.response
+            self.__response['error'] = True
+            self.__response['message'] = 'Not an array given, the parameter must be an array'
+            self.__response['data'] = []
+            return self.__response
 
     def set_content(self, title, subtitle, message):
         if not title and not subtitle and not message:
-            self.response['error'] = True
-            self.response['message'] = 'All the fields are empty, title, subtitle and message. Need at least one'
-            self.response['data'] = []
-            return self.response
+            self.__response['error'] = True
+            self.__response['message'] = 'All the fields are empty, title, subtitle and message. Need at least one'
+            self.__response['data'] = []
+            return self.__response
         else:
-            self.title = title
-            self.subtitle = subtitle
-            self.message = message
+            self.__title = title
+            self.__subtitle = subtitle
+            self.__message = message
             return True
 
     def set_playerids(self, players):
         if isinstance(players, list):
-            if not self.included_segments or not self.excluded_segments:
-                self.include_players_ids = players
-                self.payload['include_player_ids'] = self.include_players_ids
+            if not self.__included_segments or not self.___excluded_segments:
+                self.__include_players_ids = players
+                self.__payload['include_player_ids'] = self.__include_players_ids
                 return True
             else:
-                self.response['error'] = True
-                self.response['message'] = 'There are values in include or exclude segments, delete them and try again'
-                self.response['data'] = []
-                return self.response
+                self.__response['error'] = True
+                self.__response['message'] = 'There are values in include or exclude segments, delete them and try again'
+                self.__response['data'] = []
+                return self.__response
         else:
-            self.response['error'] = True
-            self.response['message'] = 'The player parameter must be a list'
-            self.response['data'] = []
-            return self.response
+            self.__response['error'] = True
+            self.__response['message'] = 'The player parameter must be a list'
+            self.__response['data'] = []
+            return self.__response
 
     def delete_included_segments(self):
-        del self.included_segments[:]
+        del self.__included_segments[:]
         return True
 
     def delete_excluded_segments(self):
-        del self.excluded_segments[:]
+        del self.___excluded_segments[:]
         return True
 
     def schedule(self, date):
-        valid_date = self.valid.is_valid_date(date)
+        valid_date = self.__valid.is_valid_date(date)
         if valid_date['error']:
-            self.response['error'] = True
-            self.response['message'] = 'There ara some missconfigurations, check data for more info'
-            self.response['data'] = {'errors': valid_date['data']}
-            return self.response
+            self.__response['error'] = True
+            self.__response['message'] = 'There ara some missconfigurations, check data for more info'
+            self.__response['data'] = {'errors': valid_date['data']}
+            return self.__response
         else:
             # Convert date to given timezone
             original_date = valid_date['data'][0]
             user_datetime = pytz.timezone(config.TIMEZONE).localize(original_date)
             # Convert date to UTC
             utc_datetime = user_datetime.astimezone(pytz.utc)
-            self.send_after = utc_datetime.strftime('%Y-%m-%d %H:%M:%S %Z')
-            self.payload['send_after'] = self.send_after
+            self.__send_after = utc_datetime.strftime('%Y-%m-%d %H:%M:%S %Z')
+            self.__payload['send_after'] = self.__send_after
             return True

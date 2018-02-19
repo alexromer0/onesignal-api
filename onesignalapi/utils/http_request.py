@@ -4,27 +4,27 @@ import json
 
 class HttpRequest:
     response = {'error': False, 'message': '', 'data': []}
-    url = ''
-    headers = {}
-    payload = {}
+    __url = ''
+    __headers = {}
+    __payload = {}
 
     def __init__(self, url, headers=False):
-        self.url = url
+        self.__url = url
         if isinstance(headers, dict):
-            self.headers = headers
+            self.__headers = headers
         else:
             self.response['error'] = True
             self.response['message'] = 'The headers are not dict type'
             self.response['data'] = headers
 
     def post_request(self, data):
-        if not self.url:
+        if not self.__url:
             self.response['error'] = True
             self.response['message'] = 'The url is empty, please provide an url'
             self.response['data'] = []
         else:
             try:
-                req = requests.post(self.url, headers=self.headers, data=json.dumps(data))
+                req = requests.post(self.__url, headers=self.__headers, data=json.dumps(data))
                 if req.status_code == 200:
                     res = req.json()
                     if 'errors' not in res:
