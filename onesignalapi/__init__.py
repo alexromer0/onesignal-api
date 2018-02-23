@@ -1,8 +1,9 @@
 from config import settings
 from notifications.notification import Notification
+from devices import device
 
 
-class OneSignal:
+class OneSignal(object):
     def __init__(self, app_id, api_key):
         settings.ONESIGNAL_API_KEY = api_key
         settings.ONESIGNAL_APP_ID = app_id
@@ -15,3 +16,8 @@ class OneSignal:
     @staticmethod
     def set_timezone(timezone):
         settings.TIMEZONE = timezone
+
+    @staticmethod
+    def set_device(os_id):
+        dev = device.Device(os_id)
+        return dev

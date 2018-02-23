@@ -1,13 +1,16 @@
 class Response(object):
 
-    def __init__(self, msg, data):
-        self._message = msg
-        self._data = data
+    def __init__(self):
+        self.__structure = {'error': None, 'message': '', 'data': ''}
 
-    @property
-    def error_response(self):
-        return {'error': True, 'message': self._message, 'data': self._data}
+    def error_response(self, msg, data):
+        self.__structure['error'] = True
+        self.__structure['message'] = msg
+        self.__structure['data'] = data
+        return self.__structure
 
-    @property
-    def success_response(self):
-        return {'error': False, 'message': self._message, 'data': self._data}
+    def success_response(self, msg, data):
+        self.__structure['error'] = True
+        self.__structure['message'] = msg
+        self.__structure['data'] = data
+        return self.__structure
