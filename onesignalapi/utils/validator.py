@@ -13,6 +13,7 @@ class Validator(object):
             return self._response.error_response('There is not APP_ID configured', [])
         if not config.ONESIGNAL_API_KEY:
             return self._response.error_response('There is not APP_KEY configured', [])
+        return self._response.success_response('ok', [])
 
     def is_valid_date(self, date):
         try:

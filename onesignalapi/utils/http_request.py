@@ -14,7 +14,9 @@ class HttpRequest(object):
         if headers is not None:
             if isinstance(headers, dict):
                 self.__headers = headers
+                self.response = response.Response().success_response('ok', [])
             else:
+                self.response = response.Response().error_response('The headers attribute must be a dictionary', [])
                 raise ValueError('The headers attribute must be a dictionary')
 
     def post_request(self, data):

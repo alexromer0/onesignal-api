@@ -55,9 +55,11 @@ class Notification(object):
             self.__payload['ios_badgeType'] = "Increase"
             self.__payload['ios_badgeCount'] = 1
 
-            req = http_helper.HttpRequest(self.__url, self.__headers)
-            if req.response['error']:
-                return req.response
+            try:
+                req = http_helper.HttpRequest(self.__url, self.__headers)
+            except ValueError as e:
+                return self.__resp.error_response(e, [])
+
             res = req.post_request(self.__payload)
             if res['error']:
                 self.__response = self.__resp.error_response(res['message'], res['data'])
@@ -94,9 +96,10 @@ class Notification(object):
         if isinstance(filters, list):
             self.__filters = filters
             self.__payload['filters'] = self.__filters
+            self.__response = self.__resp.success_response('ok', [])
         else:
             self.__response = self.__resp.error_response('Not an array given, the parameter must be an array', [])
-            return self.__response
+        return self.__response
 
     def set_content(self, title, subtitle, message):
         if not title and not subtitle and not message:
@@ -139,10 +142,10 @@ class Notification(object):
             return self.__response
         else:
             # Convert date to given timezone
-            original_date = valid_date['data'][0]
+            original_date = valid_date['data']
             user_datetime = pytz.timezone(config.TIMEZONE).localize(original_date)
             # Convert date to UTC
             utc_datetime = user_datetime.astimezone(pytz.utc)
             self.__send_after = utc_datetime.strftime('%Y-%m-%d %H:%M:%S %Z')
             self.__payload['send_after'] = self.__send_after
-            return True
+            return self.__resp.success_response('ok', [])
