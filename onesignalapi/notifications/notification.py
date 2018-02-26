@@ -63,6 +63,8 @@ class Notification(object):
             res = req.post_request(self.__payload)
             if res['error']:
                 self.__response = self.__resp.error_response(res['message'], res['data'])
+            else:
+                self.__response = self.__resp.success_response('success', res['data'])
         return self.__response
 
     def include_segments(self, segments):
@@ -110,14 +112,14 @@ class Notification(object):
             self.__title = title
             self.__subtitle = subtitle
             self.__message = message
-            return True
+            return self.__resp.success_response('ok', [])
 
     def set_playerids(self, players):
         if isinstance(players, list):
-            if not self.__included_segments or not self.__excluded_segments:
+            if not self.__included_segments and not self.__excluded_segments:
                 self.__include_players_ids = players
                 self.__payload['include_player_ids'] = self.__include_players_ids
-                return True
+                return self.__resp.success_response('ok', [])
             else:
                 self.__response = self.__resp.error_response(
                     'There are values in include or exclude segments, delete them and try again', [])
@@ -128,11 +130,11 @@ class Notification(object):
 
     def delete_included_segments(self):
         del self.__included_segments[:]
-        return True
+        return self.__resp.success_response('ok', [])
 
     def delete_excluded_segments(self):
         del self.__excluded_segments[:]
-        return True
+        return self.__resp.success_response('ok', [])
 
     def schedule(self, date):
         valid_date = self.__valid.is_valid_date(date)

@@ -52,7 +52,7 @@ class HttpRequest(object):
                 _response = response.Response()
                 self.response = _response.error_response('The url is empty, please provide an url', [])
             else:
-                req = requests.put(self.__url, data=data, headers=self.__headers)
+                req = requests.put(self.__url, data=json.dumps(data), headers=self.__headers)
                 if req.status_code == 200:
                     _response = response.Response()
                     self.response = _response.success_response('success', req.json())
@@ -73,7 +73,7 @@ class HttpRequest(object):
                 _response = response.Response()
                 self.response = _response.error_response('The url is empty, please provide an url', [])
             else:
-                req = requests.get(self.__url, params=data)
+                req = requests.get(self.__url, params=json.dumps(data))
                 if req.status_code == 200:
                     _response = response.Response()
                     self.response = _response.success_response('success', req.json())
