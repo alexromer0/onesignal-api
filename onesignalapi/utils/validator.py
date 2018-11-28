@@ -2,6 +2,7 @@ import datetime
 
 from onesignalapi.utils import response
 import onesignalapi.config.settings as config
+from onesignalapi.errors.exceptions import MisconfigurationError
 
 
 class Validator(object):
@@ -10,10 +11,9 @@ class Validator(object):
 
     def check_setup(self):
         if not config.ONESIGNAL_APP_ID:
-            return self._response.error_response('There is not APP_ID configured', [])
+            raise MisconfigurationError('No APP_ID configured')
         if not config.ONESIGNAL_API_KEY:
-            return self._response.error_response('There is not APP_KEY configured', [])
-        return self._response.success_response('ok', [])
+            raise MisconfigurationError('No APP_KEY configured')
 
     def is_valid_date(self, date):
         try:

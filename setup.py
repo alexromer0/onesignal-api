@@ -17,6 +17,5 @@ setup(
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
         'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7', ], install_requires=['pytz']
+        'Programming Language :: Python :: 3', ], install_requires=['pytz', 'requests']
 )

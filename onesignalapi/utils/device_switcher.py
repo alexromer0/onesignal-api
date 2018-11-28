@@ -19,7 +19,7 @@ class DeviceSwitch(object):
             "playtime": self.__playtime,
             "badge_count": self.__badge_count,
             "last_active": self.__last_active,
-            # WARNING: Be carefull with this one
+            # WARNING: Be careful with this one
             "notification_type": self.__notification_types,
             # For testing only
             "test_type": self.__test_type,
@@ -35,7 +35,7 @@ class DeviceSwitch(object):
     # val: String
     @staticmethod
     def __identifier(val):
-        if isinstance(val, basestring):
+        if isinstance(val, str):
             return val
         else:
             raise ValueError('Identifier value must be a string')
@@ -43,7 +43,7 @@ class DeviceSwitch(object):
     # val: String
     @staticmethod
     def __language(val):
-        if isinstance(val, basestring):
+        if isinstance(val, str):
             return val
         else:
             raise ValueError('Language value must be a string')
@@ -59,7 +59,7 @@ class DeviceSwitch(object):
     # val: String
     @staticmethod
     def __game_version(val):
-        if isinstance(val, basestring):
+        if isinstance(val, str):
             return val
         else:
             raise ValueError('Game version value must be a string')
@@ -67,7 +67,7 @@ class DeviceSwitch(object):
     # val: String
     @staticmethod
     def __device_model(val):
-        if isinstance(val, basestring):
+        if isinstance(val, str):
             return val
         else:
             raise ValueError('Device model value must be a string')
@@ -75,7 +75,7 @@ class DeviceSwitch(object):
     # val: String
     @staticmethod
     def __device_os(val):
-        if isinstance(val, basestring):
+        if isinstance(val, str):
             return val
         else:
             raise ValueError('Device OS value must be a string')
@@ -83,7 +83,7 @@ class DeviceSwitch(object):
     # val: String
     @staticmethod
     def __ad_id(val):
-        if isinstance(val, basestring):
+        if isinstance(val, str):
             return val
         else:
             raise ValueError('Ad ID value must be a string')
@@ -91,7 +91,7 @@ class DeviceSwitch(object):
     # val: String
     @staticmethod
     def __sdk(val):
-        if isinstance(val, basestring):
+        if isinstance(val, str):
             return val
         else:
             raise ValueError('SDK value must be a string')
@@ -108,7 +108,7 @@ class DeviceSwitch(object):
     def __tags(self, val):
         if isinstance(val, dict):
             temp_tags = self.__device_data['tags']
-            for key_data, val_data in val.iteritems():
+            for key_data, val_data in val.items():
                 # updating and creating the tags
                 temp_tags[key_data] = val_data
             return temp_tags
@@ -118,7 +118,7 @@ class DeviceSwitch(object):
     # val: String
     @staticmethod
     def __amount_spent(val):
-        if isinstance(val, basestring):
+        if isinstance(val, str):
             return val
         else:
             raise ValueError('Amount spent value must be a string')
@@ -190,7 +190,7 @@ class DeviceSwitch(object):
     # val: String
     @staticmethod
     def __country(val):
-        if isinstance(val, basestring):
+        if isinstance(val, str):
             return val
         else:
             raise ValueError('Country value must be a string')

@@ -20,7 +20,7 @@ class Device(object):
             if not self.__id:
                 return self.__response.error_response('Not one signal id provided', self.__id)
             else:
-                # First you need to get the devices and make sure you are not overwritting the device data
+                # First you need to get the devices and make sure you are not overwriting the device data
                 device = self.get_device()
                 if device['error']:
                     return self.__response.error_response('There was a problem updating: ' + device['message'],
@@ -28,7 +28,7 @@ class Device(object):
                 else:
                     # Switcher
                     switcher = device_switcher.DeviceSwitch(device['data'])
-                    for key, value in data.iteritems():
+                    for key, value in data.items():
                         try:
                             # Validate and transform all the values
                             payload[key] = switcher.switch(key, value)
@@ -45,14 +45,14 @@ class Device(object):
                         resp = self.__response.success_response('success', r['data'])
                     return resp
         else:
-            return self.__response.error_response('Not dictionary received for data', data)
+            return self.__response.error_response('No dictionary received for data', data)
 
     def get_device(self):
         if not config.ONESIGNAL_APP_ID:
             return self.__response.error_response('No One signal APP ID configured', [])
 
         if not self.__id:
-            return self.__response.error_response('Not one signal id provided', self.__id)
+            return self.__response.error_response('No one signal id provided', self.__id)
         else:
             url = self.__url + '/' + self.__id
             try:

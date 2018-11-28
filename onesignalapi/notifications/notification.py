@@ -9,19 +9,24 @@ It always return a dictionary (dict) with this 3 elements:
 - message: (String) If there is an error it explain it, or `Ok` if nothing fails
 - data: (list) It contains the response data or error data
 
-TODO:
-A lot! XD
 """
 import pytz
 
-import onesignalapi.config.settings as config
+from onesignalapi.config import settings as config
 import onesignalapi.utils.http_request as http_helper
 import onesignalapi.utils.validator as validator
+from onesignalapi.errors.exceptions import *
 from onesignalapi.utils import response
 
 
 class Notification(object):
     def __init__(self, title, subtitle, message):
+        """ Instantiate class Notification
+
+        :param title:
+        :param subtitle:
+        :param message:
+        """
         self.__url = config.ONESIGNAL_BASE_URL + config.ONESIGNAL_VERSION + '/notifications'
         self.__title = title
         self.__subtitle = subtitle
@@ -42,29 +47,33 @@ class Notification(object):
         self.__valid = validator.Validator()
 
     def send(self):
-        setup_valid = self.__valid.check_setup()
+        """ Sends the current notification
 
-        if setup_valid['error']:
-            self.__response = self.__resp.error_response('There ara some missconfigurations, check data for more info',
-                                                         {'errors': setup_valid['message']})
-        else:
-            self.__payload['app_id'] = config.ONESIGNAL_APP_ID
-            self.__payload['headings'] = {"en": self.__title}
-            self.__payload['subtitle'] = {"en": self.__subtitle}
-            self.__payload['contents'] = {"en": self.__message}
-            self.__payload['ios_badgeType'] = "Increase"
-            self.__payload['ios_badgeCount'] = 1
+        :return Response:
+        """
+        try:
+            self.__valid.check_setup()
+        except MisconfigurationError as e:
+            return self.__resp.error_response(e, [])
 
-            try:
-                req = http_helper.HttpRequest(self.__url, self.__headers)
-            except ValueError as e:
-                return self.__resp.error_response(e, [])
+        try:
+            req = http_helper.HttpRequest(self.__url, self.__headers)
+        except ValueError as e:
+            return self.__resp.error_response(e, [])
 
+        self.__payload['app_id'] = config.ONESIGNAL_APP_ID
+        self.__payload['headings'] = {"en": self.__title}
+        self.__payload['subtitle'] = {"en": self.__subtitle}
+        self.__payload['contents'] = {"en": self.__message}
+        self.__payload['ios_badgeType'] = config.IOS_BADGETYPE
+        self.__payload['ios_badgeCount'] = 1
+
+        try:
             res = req.post_request(self.__payload)
-            if res['error']:
-                self.__response = self.__resp.error_response(res['message'], res['data'])
-            else:
-                self.__response = self.__resp.success_response('success', res['data'])
+            self.__response = self.__resp.success_response('success', res['data'])
+        except HttpRequestError as e:
+            self.__response = self.__resp.error_response(str(e), e.data)
+
         return self.__response
 
     def include_segments(self, segments):
@@ -139,7 +148,7 @@ class Notification(object):
     def schedule(self, date):
         valid_date = self.__valid.is_valid_date(date)
         if valid_date['error']:
-            self.__response = self.__resp.error_response('There ara some missconfigurations, check data for more info',
+            self.__response = self.__resp.error_response('There is a misconfiguration, check data for more info',
                                                          {'errors': valid_date['message']})
             return self.__response
         else:
